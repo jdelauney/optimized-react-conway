@@ -32,8 +32,8 @@ export class ConwayEngine {
   private canvasRef: HTMLCanvasElement | null;
   private ctx: CanvasRenderingContext2D | null;
   private showGridLines: boolean = false;
-  private colorCell: string = '#000';
-  private colorGrid: string = '#fff';
+  private colorCell: string = '#fdba74';
+  private colorGrid: string = '#1c1917';
   private cellAlive: number = 0;
 
   constructor() {

@@ -1,32 +1,38 @@
-import { Dispatch, SetStateAction, createContext } from "react";
-import { ConwayEngine } from "../engine/conway";
+import { Dispatch, SetStateAction, createContext } from 'react';
+import { ConwayEngine } from '../engine/conway';
 
-
-export type ConwayContextType = { 
+export type ConwayContextType = {
   conwayEngine: ConwayEngine | null;
   isRunning: boolean;
   setIsRunning: Dispatch<SetStateAction<boolean>>;
   randomFillRate: number;
-  setRandomFillRate: Dispatch<SetStateAction<number>>;  
+  setRandomFillRate: Dispatch<SetStateAction<number>>;
   showGridLines: boolean;
   setShowGridLines: Dispatch<SetStateAction<boolean>>;
   nbGenerations: number;
   setNbGenerations: Dispatch<SetStateAction<number>>;
   isReady: boolean;
   setIsReady: Dispatch<SetStateAction<boolean>>;
-  
+  averageElapsedTime: number;
+  setAverageElapsedTime: Dispatch<SetStateAction<number>>;
+  needUpdate: boolean;
+  setNeedUpdate: Dispatch<SetStateAction<boolean>>;
 };
 
-export const ConwayContext = createContext<ConwayContextType>({    
+export const ConwayContext = createContext<ConwayContextType>({
   conwayEngine: null,
   isRunning: false,
-  setIsRunning: () => { },
+  setIsRunning: () => {},
   randomFillRate: 0,
-  setRandomFillRate: () => { },  
+  setRandomFillRate: () => {},
   showGridLines: false,
-  setShowGridLines: () => { },
+  setShowGridLines: () => {},
   nbGenerations: 0,
-  setNbGenerations: () => { },
+  setNbGenerations: () => {},
   isReady: false,
-  setIsReady: () => { },
+  setIsReady: () => {},
+  averageElapsedTime: 0,
+  setAverageElapsedTime: () => {},
+  needUpdate: false,
+  setNeedUpdate: () => {},
 });

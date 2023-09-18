@@ -3,7 +3,8 @@ import { Button } from '../../../components/ui/Button/Button';
 import { ConwayContext } from '../../../contexts/ConwayContext';
 
 export const Navbar = () => {
-  const { conwayEngine, setIsRunning, isRunning, nbGenerations, isReady } = useContext(ConwayContext);
+  const { conwayEngine, setIsRunning, isRunning, nbGenerations, isReady, averageElapsedTime, needUpdate } =
+    useContext(ConwayContext);
   const [totalCell, setTotalCell] = useState<number>(0);
   const [cellAlive, setCellAlive] = useState<number>(0);
 
@@ -12,7 +13,7 @@ export const Navbar = () => {
       setTotalCell(conwayEngine.getTotalCell());
       setCellAlive(conwayEngine.getCellAlive());
     }
-  }, [conwayEngine, isReady, nbGenerations]);
+  }, [conwayEngine, isReady, needUpdate]);
 
   const handlePlayClick = () => {
     setIsRunning(currentState => {
@@ -28,17 +29,18 @@ export const Navbar = () => {
           Conway's Game of Life
         </span>
         <div className='flex-grow flex items-center divide-x-2 divide-slate-300'>
-          <span className='leading-none font-bold text-gray-100 mr-2 pr-2'>
+          <span className='leading-none font-bold text-gray-100 mr-2 pr-2 text-sm'>
             Total cells : <span className='text-blue-300 font-normal'>{isNaN(totalCell) ? '-' : totalCell}</span>
           </span>
-          <span className='leading-none font-bold text-gray-100 px-2'>
+          <span className='leading-none font-bold text-gray-100 px-2 text-sm'>
             Generation : <span className='text-yellow-400 font-normal'>{nbGenerations}</span>
           </span>
-          <span className='leading-none font-bold text-gray-100 px-2'>
+          <span className='leading-none font-bold text-gray-100 px-2 text-sm'>
             Cells alive : <span className='text-green-300 font-normal'>{cellAlive}</span>
           </span>
-          <span className='leading-none font-bold text-gray-100 px-2'>
-            Performance : <span className='text-red-200 font-normal'>0ms</span>
+          <span className='leading-none font-bold text-gray-100 px-2 text-sm'>
+            Average speed rendering :{' '}
+            <span className='text-red-200 font-normal'>{averageElapsedTime.toFixed(3)}ms</span>
           </span>
         </div>
 
