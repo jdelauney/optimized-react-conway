@@ -72,7 +72,9 @@ export const ConwayWorld = (props: ConwayWorldProps) => {
         animateCallback();
         timerId = requestAnimationFrame(animate);
       };
-      timerId = requestAnimationFrame(animate);
+      setTimeout(function () {
+        timerId = requestAnimationFrame(animate);
+      }, 100); // 1000 / 20
       return () => cancelAnimationFrame(timerId);
     }
   }, [isRunning]);

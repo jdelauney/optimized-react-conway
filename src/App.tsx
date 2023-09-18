@@ -8,8 +8,8 @@ import { ConwayContext, ConwayContextType } from './contexts/ConwayContext';
 const App = () => {
   const [conwayEngine, setConwayEngine] = useState<ConwayEngine>(new ConwayEngine());
   const [nbGenerations, setNbGenerations] = useState<number>(0);
-  const [cellSize, setCellSize] = useState<number>(10);
-  const [randomFillRate, setRandomFillRate] = useState<number>(50);
+  const [cellSize, setCellSize] = useState<number>(6);
+  const [randomFillRate, setRandomFillRate] = useState<number>(70);
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [showGridLines, setShowGridLines] = useState<boolean>(true);
   const [isReady, setIsReady] = useState<boolean>(false);
