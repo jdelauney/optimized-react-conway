@@ -2,12 +2,13 @@ import { PropsWithChildren, useLayoutEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 type RenderModalProps = PropsWithChildren<{
-  wrapperId: string;
+  wrapperId?: string;
 }>;
 export const RenderModal = (props: RenderModalProps) => {
   const { children, wrapperId } = props;
 
-  if (wrapperId === '') throw new Error('wrapperId is required and cannot be empty');
+  //if (wrapperId === '') throw new Error('wrapperId is required and cannot be empty');
+  const wrapperIdDefault = 'modal-wrapper';
 
   const [wrapperElement, setWrapperElement] = useState<HTMLElement | null>(null);
 
@@ -19,12 +20,13 @@ export const RenderModal = (props: RenderModalProps) => {
   };
 
   useLayoutEffect(() => {
-    let element = document.getElementById(wrapperId);
+    let wrapperIdName = wrapperId ? wrapperId : wrapperIdDefault;
+    let element = document.getElementById(wrapperIdName);
     let systemCreated = false;
 
     if (!element) {
       systemCreated = true;
-      element = createModalWrapper(wrapperId);
+      element = createModalWrapper(wrapperIdName);
     }
     setWrapperElement(element);
 

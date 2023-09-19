@@ -23,15 +23,19 @@ const ModalButtonClose = (props: PropsWithChildren<{ onClose: () => void }>) => 
 };
 const ModalDialogHeader = (props: PropsWithChildren<{ title: string }>) => {
   return (
-    <header className=''>
-      <h2 className=''>{props.title}</h2>
+    <header className='px-4 py-2 flex justify-between items-center border-b-2 border-slate-600 bg-slate-800 mb-2'>
+      <h2 className='text-xl font-bold text-slate-300'>{props.title}</h2>
       {props.children}
     </header>
   );
 };
 
 const ModalDialogFooter = (props: PropsWithChildren<{}>) => {
-  return <footer className=''>{props.children}</footer>;
+  return (
+    <footer className='px-4 py-2 flex justify-end gap-3 items-center border-t-2 border-slate-600 bg-slate-800 mt-2'>
+      {props.children}
+    </footer>
+  );
 };
 
 export const ModalDialog = (props: ModalDialogProps) => {
@@ -92,7 +96,11 @@ export const ModalDialog = (props: ModalDialogProps) => {
   }, [isModalOpen]);
 
   return (
-    <dialog ref={modalDialogRef} onKeyDown={handleKeyDown} className=''>
+    <dialog
+      ref={modalDialogRef}
+      onKeyDown={handleKeyDown}
+      className='bg-slate-700 text-slate-100 backdrop:bg-slate-800 backdrop:bg-opacity-70 open:animate-fade-in open:backdrop:animate-fade-in'
+    >
       {hasHeader ? (
         <ModalDialogHeader title={title ? title : 'Boite de dialogue'}>
           {hasTopCloseButton && <ModalButtonClose onClose={handleCloseModalClick} />}
@@ -100,7 +108,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
       ) : (
         hasTopCloseButton && <ModalButtonClose onClose={handleCloseModalClick} />
       )}
-      {children}
+      <div className='px-3 py-2'>{children}</div>
       {hasFooter && (
         <ModalDialogFooter>
           {hasFooterActionButton && (

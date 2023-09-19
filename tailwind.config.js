@@ -103,26 +103,27 @@ export default {
           950: "#03131B"
         }
       },
-
-      variants: {
-
+      keyframes: {
+        "fade-in": {
+          '0%': { opacity: '0%' },
+          '100%': { opacity: '100%' },
+        }
       },
+      animation: {
+        "fade-in": 'fade-in 0.5s ease-in-out',
+      }
     },
+
+    variants: {},
   },
+
   plugins: [],
 
   safelist: [
     {
       pattern:
         /(bg|text|border)-(primary|secondary|accent|success|danger|warning|info)-(50|100|200|300|400|500|600|700|800|900|950)/,
-    },
-    {
-      pattern:
-        /(hover:)(bg|hover:text|hover:border)-(primary|secondary|accent|success|danger|warning|info)-(50|100|200|300|400|500|600|700|800|900|950)/,
-    },
-    {
-      pattern:
-        /(focus:)(bg|focus:text|focus:border)-(primary|secondary|accent|success|danger|warning|info)-(50|100|200|300|400|500|600|700|800|900|950)/,
+      variants: ['hover', 'focus', 'active', 'disabled'],
     },
     {
       pattern: /(mt|mb|mr|ml|my|mx|px|py|pt|pb|pl|pr)-[0-9]+/
