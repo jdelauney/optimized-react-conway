@@ -1,11 +1,9 @@
-import { ConwayWorld } from "./components/ConwayWorld/ConwayWorld"
-
-
+import { ConwayWorld } from './components/ConwayWorld/ConwayWorld';
 
 export const Home = () => {
   return (
     <>
-      <ConwayWorld/>
+      <ConwayWorld />
     </>
-  )
-}
+  );
+};
