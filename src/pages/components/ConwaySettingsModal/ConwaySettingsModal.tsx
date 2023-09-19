@@ -1,4 +1,5 @@
-import { ModalDialog } from '../../../components/Modal/ModalDialog';
+import { ModalDialog } from '../../../components/ModalDialog/ModalDialog';
+import { ConwaySettingsForm } from './ConwaySettingsForm';
 
 type ConwaySettingsModalProps = {
   isOpen: boolean;
@@ -21,6 +22,15 @@ export const ConwaySettingsModal = (props: ConwaySettingsModalProps) => {
     }
   };
 
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log('submit');
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('change');
+  };
+
   return (
     <ModalDialog
       isOpen={isOpen}
@@ -35,26 +45,7 @@ export const ConwaySettingsModal = (props: ConwaySettingsModalProps) => {
       onAction={handleActionModalClick}
       onClose={handleCloseModalClick}
     >
-      <div className=''>
-        <form>
-          <div className=''>
-            <label htmlFor=''>Cell size</label>
-            <input type='number' name='' id='' />
-          </div>
-          <div className=''>
-            <label htmlFor=''>Cell color</label>
-            <input type='color' name='' id='' />
-          </div>
-          <div className=''>
-            <label htmlFor=''>Background color</label>
-            <input type='color' name='' id='' />
-          </div>
-          <div className=''>
-            <label htmlFor=''>Grid color</label>
-            <input type='color' name='' id='' />
-          </div>
-        </form>
-      </div>
+      <ConwaySettingsForm onSubmit={handleFormSubmit} onInputChange={handleInputChange} />
     </ModalDialog>
   );
 };
