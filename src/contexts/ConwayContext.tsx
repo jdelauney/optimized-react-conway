@@ -1,14 +1,12 @@
 import { Dispatch, SetStateAction, createContext } from 'react';
-import { ConwayEngine } from '../engine/conway';
+import { ConwayEngine, ConwaySettingsType } from '../engine/conway';
 
 export type ConwayContextType = {
   conwayEngine: ConwayEngine | null;
   isRunning: boolean;
   setIsRunning: Dispatch<SetStateAction<boolean>>;
-  randomFillRate: number;
-  setRandomFillRate: Dispatch<SetStateAction<number>>;
-  showGridLines: boolean;
-  setShowGridLines: Dispatch<SetStateAction<boolean>>;
+  conwaySettings: ConwaySettingsType;
+  setConwaySettings: Dispatch<SetStateAction<ConwaySettingsType>>;
   nbGenerations: number;
   setNbGenerations: Dispatch<SetStateAction<number>>;
   isReady: boolean;
@@ -23,10 +21,15 @@ export const ConwayContext = createContext<ConwayContextType>({
   conwayEngine: null,
   isRunning: false,
   setIsRunning: () => {},
-  randomFillRate: 0,
-  setRandomFillRate: () => {},
-  showGridLines: false,
-  setShowGridLines: () => {},
+  conwaySettings: {
+    cellSize: 0,
+    randomFillRate: 0,
+    backgroundColor: '',
+    cellColor: '',
+    showGridLines: false,
+    gridColor: '',
+  },
+  setConwaySettings: () => {},
   nbGenerations: 0,
   setNbGenerations: () => {},
   isReady: false,

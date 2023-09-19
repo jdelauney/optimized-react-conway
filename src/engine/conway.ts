@@ -10,6 +10,16 @@ export type ConwayCellType = {
   alive: number;
 };
 
+export const CONWAY_DEFAULT_SETTINGS = {
+  cellSize: 10,
+  randomFillRate: 70,
+  showGridLines: true,
+  cellColor: '#fdba74',
+  gridColor: '#1c1917',
+  backgroundColor: '#000000',
+};
+export type ConwaySettingsType = typeof CONWAY_DEFAULT_SETTINGS;
+
 export type ConwayWorldType = ConwayCellType[];
 
 export class ConwayEngine {
@@ -165,18 +175,6 @@ export class ConwayEngine {
     return '#' + rs + gs + bs;
   }
 
-  // private adjustColorIntensity(hexColor: string, intensity: number): string {
-  //   const rgb: string[] = [0, 2, 4].map(shift => {
-  //     let component: number = parseInt(hexColor.substring(1 + shift, 3 + shift), 16);
-  //     component = Math.floor(component * intensity);
-  //     component = Math.max(0, Math.min(255, component));
-
-  //     return component.toString(16).padStart(2, '0');
-  //   });
-
-  //   return '#' + rgb.join('');
-  // }
-
   public genNextStep() {
     // On récupère uniquement les cellules vivantes
     let livingCells = this.getLivingCells();
@@ -214,11 +212,16 @@ export class ConwayEngine {
 
       const px = x * this.cellSizeInPx;
       const py = y * this.cellSizeInPx;
+
       // Dessiner les cellules mortes avec une couleur basée sur leur temps de décomposition
-      if (this.lastBoard[i] === 0 && newValue === 0 && this.decompositionTime[i] >= 0) {
-        const intensity = this.decompositionTime[i] * 0.01; // 1/100
-        this.ctx.fillStyle = this.adjustColorIntensity(this.colorCell, intensity);
-        this.ctx.fillRect(px, py, this.cellSizeInPx, this.cellSizeInPx);
+      if (this.lastBoard[i] === 0 && newValue === 0) {
+        if (this.decompositionTime[i] > 0) {
+          const intensity = this.decompositionTime[i] * 0.01; // 1/100
+          this.ctx.fillStyle = this.adjustColorIntensity(this.colorCell, intensity);
+          this.ctx.fillRect(px, py, this.cellSizeInPx, this.cellSizeInPx);
+        } else {
+          this.ctx.clearRect(px, py, this.cellSizeInPx, this.cellSizeInPx);
+        }
       }
 
       // Dessiner les cellules qui sont passées de mortes à vivantes
