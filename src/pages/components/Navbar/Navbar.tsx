@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { Button } from '../../../components/ui/Button/Button';
 import { ConwayContext } from '../../../contexts/ConwayContext';
-import { RenderModal } from '../../../components/Modal/RenderModal';
+import { RenderModal } from '../../../components/ModalDialog/RenderModal';
 import { ConwaySettingsModal } from '../ConwaySettingsModal/ConwaySettingsModal';
 
 export const Navbar = () => {
@@ -65,10 +65,9 @@ export const Navbar = () => {
           </Button>
           <Button variant='primary'>Next step</Button>
           <Button variant='accent' onClick={handleSettingsClick}>
-            Setup
+            Settings
           </Button>
           <Button variant='danger'>Reset</Button>
-          <Button variant='primary'>Random</Button>
         </nav>
       </div>
 
