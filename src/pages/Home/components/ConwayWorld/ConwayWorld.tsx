@@ -68,20 +68,42 @@ export const ConwayWorld = (props: ConwayWorldProps) => {
     if (isRunning) {
       let timerId: number;
 
+      let msPrev = window.performance.now();
+      const fps = 25;
+      const msPerFrame = 1000 / fps;
+      //let frames = 0;
+
       const animate = () => {
         animateCallback();
         timerId = requestAnimationFrame(animate);
+
+        const msNow = window.performance.now();
+        const msPassed = msNow - msPrev;
+
+        if (msPassed < msPerFrame) return;
+
+        const excessTime = msPassed % msPerFrame;
+        msPrev = msNow - excessTime;
+
+        //frames++;
       };
-      setTimeout(function () {
-        timerId = requestAnimationFrame(animate);
-      }, 100); // 1000 / 20
+
+      // setTimeout(function () {
+      // }, 100); // 1000 / 20
+
+      timerId = requestAnimationFrame(animate);
+
       return () => cancelAnimationFrame(timerId);
     }
   }, [isRunning]);
 
   return (
     <div className='w-full h-full' {...rest}>
-      <canvas ref={canvasRef} className='w-full h-full' width={'100%'} height={'100%'} />
+      {isReady ? (
+        <canvas ref={canvasRef} className='w-full h-full' width={'100%'} height={'100%'} />
+      ) : (
+        <div className='w-full h-full flex justify-center items-center text-2xl text-gray-100'>Loading...</div>
+      )}
     </div>
   );
 };
