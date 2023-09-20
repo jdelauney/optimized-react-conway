@@ -5,8 +5,21 @@ import { RenderModal } from '../../../components/ModalDialog/RenderModal';
 import { ConwaySettingsModal } from '../ConwaySettingsModal/ConwaySettingsModal';
 
 export const Navbar = () => {
-  const { conwayEngine, setIsRunning, isRunning, nbGenerations, isReady, averageElapsedTime, needUpdate } =
-    useContext(ConwayContext);
+  const {
+    conwayEngine,
+    setIsRunning,
+    isRunning,
+    nbGenerations,
+    isReady,
+    setIsReady,
+    averageElapsedTime,
+    setAverageElapsedTime,
+    needUpdate,
+    fps,
+    setFPS,
+    setNbGenerations,
+    setIsLooping,
+  } = useContext(ConwayContext);
 
   const [totalCell, setTotalCell] = useState<number>(0);
   const [cellAlive, setCellAlive] = useState<number>(0);
@@ -24,10 +37,32 @@ export const Navbar = () => {
       currentState = !currentState;
       return currentState;
     });
+    setIsLooping(currentState => {
+      currentState = !currentState;
+      return currentState;
+    });
   };
 
   const handleSettingsClick = () => {
     setIsSettingsDialogOpen(currentState => {
+      currentState = !currentState;
+      return currentState;
+    });
+  };
+
+  const handleResetClick = () => {
+    setIsReady(false);
+    conwayEngine?.generateRandomWorld().then(() => {
+      setCellAlive(conwayEngine.getCellAlive());
+      setAverageElapsedTime(0);
+      setNbGenerations(0);
+      setFPS(0);
+      setIsReady(true);
+    });
+  };
+
+  const handleNextStepClick = () => {
+    setIsRunning(currentState => {
       currentState = !currentState;
       return currentState;
     });
@@ -58,16 +93,23 @@ export const Navbar = () => {
               Average speed rendering :{' '}
               <span className='text-red-200 font-normal'>{averageElapsedTime.toFixed(3)}ms</span>
             </span>
+            <span className='leading-none font-bold text-gray-100 px-2 text-sm'>
+              Average FPS : <span className='text-red-200 font-normal'>{Math.floor(fps)}</span>
+            </span>
           </div>
 
           <Button variant='primary' onClick={handlePlayClick}>
             {isRunning ? 'Stop' : 'Play'}
           </Button>
-          <Button variant='primary'>Next step</Button>
-          <Button variant='accent' onClick={handleSettingsClick}>
+          <Button variant='primary' disabled={isRunning} onClick={handleNextStepClick}>
+            Next step
+          </Button>
+          <Button variant='accent' disabled={isRunning} onClick={handleSettingsClick}>
             Settings
           </Button>
-          <Button variant='danger'>Reset</Button>
+          <Button variant='danger' disabled={isRunning} onClick={handleResetClick}>
+            Reset
+          </Button>
         </nav>
       </div>
 
