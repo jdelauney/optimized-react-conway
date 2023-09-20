@@ -28,10 +28,11 @@ const App = () => {
         });
       }
     }
-  }, [windowSize, conwayEngine]);
+  }, [windowSize, conwayEngine, isReady]);
 
   useEffect(() => {
     conwayEngine.setSettings(conwaySettings);
+    setIsReady(false);
   }, [conwaySettings]);
 
   const conwayContextValue: ConwayContextType = {
