@@ -308,11 +308,18 @@ export class ConwayEngine {
     this.displayHeight = height;
   }
 
+  private updateRenderingProperties() {
+    this.renderCellSize = this.showGridLines ? this.cellSizeInPx - 1 : this.cellSizeInPx;
+    this.cellRadius = this.showGridLines ? this.cellSizeInPx / 2 - 1 : this.cellSizeInPx / 2;
+    this.offsetCell = this.showGridLines ? 1 : 0;
+  }
+
   private setCellSize(cellSizeInPx: number) {
     if (cellSizeInPx === null || cellSizeInPx === undefined || cellSizeInPx <= 1) {
       throw new Error('cellSizeInPx must be greater than 1');
     }
     this.cellSizeInPx = cellSizeInPx;
+    this.updateRenderingProperties();
   }
 
   public setCanvasRef(ref: HTMLCanvasElement) {
@@ -327,6 +334,7 @@ export class ConwayEngine {
 
   public setShowGridLines(showGridLines: boolean) {
     this.showGridLines = showGridLines;
+    this.updateRenderingProperties();
     this.firstRender = true;
   }
 

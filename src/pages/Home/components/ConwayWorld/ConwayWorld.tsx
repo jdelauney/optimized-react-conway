@@ -25,7 +25,6 @@ export const ConwayWorld = (props: ConwayWorldProps) => {
 
   const totalTime = useRef<number>(0);
   const generations = useRef<number>(0);
-  const previousTime = useRef<number>(0);
   const averageFps = useRef<number>(0);
 
   useEffect(() => {
@@ -64,21 +63,18 @@ export const ConwayWorld = (props: ConwayWorldProps) => {
   }, [nbGenerations, averageElapsedTime, totalTime.current, generations.current, needUpdate]);
 
   const animateCallback = useCallback(
-    (currentTime: number) => {
-      const deltaTime = currentTime - previousTime.current;
-      if (conwayEngine) {
-        conwayEngine.genNextStep();
-        conwayEngine.drawWorld();
+    (deltaTime: number) => {
+      conwayEngine!.genNextStep();
+      conwayEngine!.drawWorld();
 
-        generations.current += 1;
-        totalTime.current += deltaTime;
-        previousTime.current = currentTime;
-        if (generations.current % 10 === 0) {
-          setNeedUpdate(currentState => {
-            currentState = !currentState;
-            return currentState;
-          });
-        }
+      generations.current += 1;
+      totalTime.current += deltaTime;
+      //previousTime.current = deltaTime;
+      if (generations.current % 10 === 0) {
+        setNeedUpdate(currentState => {
+          currentState = !currentState;
+          return currentState;
+        });
       }
     },
     [totalTime.current, generations.current, conwayEngine, needUpdate]
@@ -88,24 +84,30 @@ export const ConwayWorld = (props: ConwayWorldProps) => {
     if (isRunning) {
       let timerId: number;
 
-      let msPrev = 0; //window.performance.now();
-      let startTime = msPrev; //Date.now();
+      let msStart: number;
+      let startTime: number;
+      let timeElapsed = 0;
 
-      const fps = 40;
+      const fps = 30;
       const msPerFrame = 1000 / fps;
       let frames = 0;
 
       const animate = (time: number) => {
-        const msNow = time; // window.performance.now();
+        if (!msStart) {
+          msStart = time;
+          startTime = msStart;
+        }
+        animateCallback(timeElapsed);
 
-        animateCallback(time);
-        const dt = msNow - startTime;
+        timeElapsed = time - msStart;
+
+        const dt = time - startTime;
 
         frames++;
-        if (dt > 1000) {
+        if (dt >= 1000) {
           averageFps.current = (frames * 1000) / dt;
           frames = 0;
-          startTime = msNow;
+          startTime = msStart;
         }
 
         if (isLooping) {
@@ -117,15 +119,10 @@ export const ConwayWorld = (props: ConwayWorldProps) => {
             return previousState;
           });
         }
-
-        const msPassed = msNow - msPrev;
-        if (msPassed < msPerFrame) return;
-        const excessTime = msPassed % msPerFrame;
-        msPrev = msNow - excessTime;
+        if (timeElapsed < msPerFrame) return;
+        const excessTime = timeElapsed % msPerFrame;
+        msStart = time - excessTime;
       };
-
-      // setTimeout(function () {
-      // }, 100); // 1000 / 20
 
       timerId = requestAnimationFrame(animate);
 
