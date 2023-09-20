@@ -1,8 +1,9 @@
-import { PropsWithChildren, useEffect, useRef, useState } from 'react';
+import { PropsWithChildren, useEffect, useRef } from 'react';
 import { Button } from '../ui/Button/Button';
 
 type ModalDialogProps = PropsWithChildren<{
   isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
   hasTopCloseButton?: boolean;
   hasHeader?: boolean;
   hasFooter?: boolean;
@@ -55,6 +56,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
   const {
     children,
     isOpen,
+    setIsOpen,
     hasTopCloseButton,
     hasHeader,
     title,
@@ -68,46 +70,37 @@ export const ModalDialog = (props: ModalDialogProps) => {
     onClose,
   } = props;
 
-  const [isModalOpen, setModalOpen] = useState(isOpen);
-
   const modalDialogRef = useRef<HTMLDialogElement | null>(null);
 
   const handleCloseModalClick = () => {
     if (onClose) {
       onClose();
     }
-    setModalOpen(false);
+    setIsOpen(false);
   };
 
   const handleActionModalClick = () => {
     if (onAction) {
       onAction();
     }
-    setModalOpen(false);
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDialogElement>) => {
     if (event.key === 'Escape') {
       handleCloseModalClick();
-    } else if (event.key === 'Enter') {
-      handleActionModalClick();
     }
   };
 
   useEffect(() => {
-    setModalOpen(isOpen);
-  }, [isOpen]);
-
-  useEffect(() => {
     const modalElement = modalDialogRef.current;
     if (modalElement) {
-      if (isModalOpen) {
+      if (isOpen) {
         modalElement.showModal();
       } else {
         modalElement.close();
       }
     }
-  }, [isModalOpen]);
+  }, [isOpen]);
 
   return (
     <dialog
@@ -127,7 +120,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
         <ModalDialogFooter>
           {hasFooterActionButton && (
             <Button
-              type='submit'
+              type={attachedFormId ? 'submit' : 'button'}
               form={attachedFormId && attachedFormId}
               variant='primary'
               onClick={handleActionModalClick}

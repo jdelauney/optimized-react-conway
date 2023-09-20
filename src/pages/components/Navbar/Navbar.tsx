@@ -44,10 +44,7 @@ export const Navbar = () => {
   };
 
   const handleSettingsClick = () => {
-    setIsSettingsDialogOpen(currentState => {
-      currentState = !currentState;
-      return currentState;
-    });
+    setIsSettingsDialogOpen(!isSettingsDialogOpen);
   };
 
   const handleResetClick = () => {
@@ -62,11 +59,7 @@ export const Navbar = () => {
   };
 
   const handleNextStepClick = () => {
-    setIsRunning(!isSettingsDialogOpen);
-  };
-
-  const handleModalClose = () => {
-    setIsSettingsDialogOpen(false);
+    setIsRunning(true);
   };
 
   return (
@@ -111,7 +104,9 @@ export const Navbar = () => {
       </div>
 
       <RenderModal>
-        {isSettingsDialogOpen && <ConwaySettingsModal isOpen={isSettingsDialogOpen} onClose={handleModalClose} />}
+        {isSettingsDialogOpen && (
+          <ConwaySettingsModal isOpen={isSettingsDialogOpen} setIsOpen={setIsSettingsDialogOpen} />
+        )}
       </RenderModal>
     </>
   );
