@@ -1,6 +1,7 @@
-import { InputHTMLAttributes, ReactNode } from 'react';
+import { ForwardedRef, InputHTMLAttributes, Key, ReactNode, forwardRef } from 'react';
 
 type InputProps = {
+  // key?: Key;
   label?: string;
   Icon?: ReactNode;
   placeholder?: string;
@@ -19,15 +20,15 @@ type InputProps = {
     | 'week'
     | 'file'
     | 'hidden'
-    | 'range';
+    | 'range'
+    | string;
   name: string;
-  autoComplete?: boolean;
   inline?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 } & InputHTMLAttributes<HTMLInputElement>;
 
-export const Input = (props: InputProps) => {
-  const { label, Icon, placeholder, type, name, autoComplete, inline, onChange, ...rest } = props;
+export const Input = forwardRef((props: InputProps, ref) => {
+  const { label, Icon, type, name, inline, onChange, ...rest } = props;
   return (
     <div className={`flex w-[20rem]  ${inline ? 'flex-row items-center' : 'flex-col'} gap-1`}>
       {label && (
@@ -44,12 +45,11 @@ export const Input = (props: InputProps) => {
           className={
             'w-full h-full  bg-transparent outline-none focus:outline-none flex items-center text-sm text-slate-400 focus:text-slate-200 pl-6 pr-3'
           }
-          placeholder={placeholder}
-          autoComplete={autoComplete}
           onChange={onChange}
+          ref={ref ? (ref as ForwardedRef<HTMLInputElement>) : undefined}
           {...rest}
         />
       </div>
     </div>
   );
-};
+});
