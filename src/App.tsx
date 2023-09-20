@@ -12,17 +12,25 @@ const App = () => {
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
   const [averageElapsedTime, setAverageElapsedTime] = useState<number>(0);
+  const [fps, setFPS] = useState<number>(0);
   const [needUpdate, setNeedUpdate] = useState<boolean>(false);
+  const [backgroundColor, setBackgroundColor] = useState<string>('#0f172a');
+  const [isLooping, setIsLooping] = useState<boolean>(false);
 
   const windowSize: WindowSize = useWindowSize();
 
   useEffect(() => {
     if (windowSize.width > 0 && windowSize.height > 0 && conwayEngine) {
-      conwayEngine.initWorld(windowSize.width, windowSize.height, conwaySettings.cellSize);
-      conwayEngine.setShowGridLines(conwaySettings.showGridLines);
-      conwayEngine.generateRandomWorld(conwaySettings.randomFillRate).then(() => {
-        setIsReady(true);
-      });
+      console.log('Cols : ' + Math.floor(windowSize.width / conwaySettings.cellSize));
+      console.log('Rows : ' + Math.floor(windowSize.height / conwaySettings.cellSize));
+      if (!isReady) {
+        conwayEngine.setSettings(conwaySettings);
+        conwayEngine.initWorld(windowSize.width, windowSize.height);
+        conwayEngine.setShowGridLines(conwaySettings.showGridLines);
+        conwayEngine.generateRandomWorld().then(() => {
+          setIsReady(true);
+        });
+      }
     }
   }, [windowSize, conwaySettings, conwayEngine]);
 
@@ -40,6 +48,12 @@ const App = () => {
     setAverageElapsedTime: setAverageElapsedTime,
     needUpdate: needUpdate,
     setNeedUpdate: setNeedUpdate,
+    backgroundColor: backgroundColor,
+    setBackgroundColor: setBackgroundColor,
+    fps: fps,
+    setFPS: setFPS,
+    isLooping: isLooping,
+    setIsLooping: setIsLooping,
   };
 
   return (
