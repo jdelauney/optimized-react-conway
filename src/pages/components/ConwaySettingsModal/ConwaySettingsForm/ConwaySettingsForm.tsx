@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { forwardRef, useContext, useState } from 'react';
 import { ConwayContext } from '../../../../contexts/ConwayContext';
 import { ConwaySettingsType } from '../../../../engine/conway';
 import { Form } from '../../../../components/ui/Form/Form';
@@ -9,7 +9,7 @@ type ConwaySettingsFormProps = {
   onFormSubmitted?: () => void;
 };
 
-export const ConwaySettingsForm = (props: ConwaySettingsFormProps) => {
+export const ConwaySettingsForm = forwardRef((props: ConwaySettingsFormProps, ref) => {
   const { id, onFormSubmitted } = props;
 
   const { conwaySettings, setConwaySettings, backgroundColor, setBackgroundColor } = useContext(ConwayContext);
@@ -60,7 +60,8 @@ export const ConwaySettingsForm = (props: ConwaySettingsFormProps) => {
         inputDataFields={conwaySettingsInputFields}
         onSubmit={handleFormSubmit}
         onInputChange={handleInputChange}
+        ref={ref}
       />
     </>
   );
-};
+});

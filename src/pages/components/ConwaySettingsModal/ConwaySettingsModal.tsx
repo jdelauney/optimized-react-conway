@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { ModalDialog } from '../../../components/ModalDialog/ModalDialog';
 import { ConwaySettingsForm } from './ConwaySettingsForm/ConwaySettingsForm';
 
@@ -9,9 +10,17 @@ type ConwaySettingsModalProps = {
 export const ConwaySettingsModal = (props: ConwaySettingsModalProps) => {
   const { isOpen, setIsOpen } = props;
 
+  const inputFocusedRef = useRef<HTMLInputElement>(null);
+
   const handleOnFormSubmitted = () => {
     setIsOpen(false);
   };
+
+  useEffect(() => {
+    if (isOpen) {
+      inputFocusedRef.current?.focus();
+    }
+  }, [isOpen]);
 
   return (
     <ModalDialog
@@ -27,7 +36,7 @@ export const ConwaySettingsModal = (props: ConwaySettingsModalProps) => {
       closeButtonText='Fermer'
       attachedFormId='conway-settings-forms'
     >
-      <ConwaySettingsForm id='conway-settings-forms' onFormSubmitted={handleOnFormSubmitted} />
+      <ConwaySettingsForm id='conway-settings-forms' onFormSubmitted={handleOnFormSubmitted} ref={inputFocusedRef} />
     </ModalDialog>
   );
 };
