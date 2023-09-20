@@ -15,8 +15,6 @@ export const Switch = (props: SwitchProps) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsChecked(previousState => !previousState);
     e.target.checked = !isChecked;
-    console.log('Switch : ', e.target.checked);
-
     if (onChange) {
       onChange(e);
     }

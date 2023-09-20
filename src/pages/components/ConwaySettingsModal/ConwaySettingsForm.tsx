@@ -27,10 +27,11 @@ export const ConwaySettingsForm = (props: ConwaySettingsFormProps) => {
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Submit');
+
     console.log('New ConwaySettings : ', newSettings);
 
     setConwaySettings(newSettings);
+
     setBackgroundColor(previousState => {
       previousState = bgColor;
       return previousState;

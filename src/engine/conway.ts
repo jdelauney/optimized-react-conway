@@ -32,9 +32,20 @@ export class ConwayEngine {
   private maxCell: number;
   private maxx: number;
   private maxy: number;
+
   private cellSizeInPx: number = 10;
+  private fillRandomRateInPercent: number = 70;
+  private decompositionFX: boolean = true;
+  private cellShapeCircle: boolean = true;
+  private showGridLines: boolean = true;
+  private colorCell: string = '#fdba74';
+  private colorGrid: string = '#1c1917';
+  private cellRadius: number = 4;
+  private offsetCell: number = 1;
+  private renderCellSize: number = 9;
   private displayWidth: number;
   private displayHeight: number;
+
   private reciprocalMaxCol: number;
   private nbGenerations: number;
   private nextBoard!: Uint8Array;
@@ -47,16 +58,8 @@ export class ConwayEngine {
   private precalcCellPos!: Position2D[];
   private canvasRef: HTMLCanvasElement | null;
   private ctx: CanvasRenderingContext2D | null;
-  private showGridLines: boolean = true;
-  private colorCell: string = '#fdba74';
-  private colorGrid: string = '#f1f1f1'; //'#1c1917';
   private cellAlive: number = 0;
-  private fillRandomRateInPercent: number = 70;
-  private decompositionFX: boolean = true;
-  private cellShapeCircle: boolean = true;
-  private cellRadius: number = 4;
-  private offsetCell: number = 1;
-  private renderCellSize: number = 9;
+
   private firstRender: boolean = true;
 
   constructor() {
@@ -247,10 +250,16 @@ export class ConwayEngine {
       //this.ctx!.closePath();
     }
   }
+
   public drawWorld() {
     if (this.canvasRef === null || this.ctx === null) {
       throw new Error('canvasRef or canvas Ctx must not be null');
     }
+
+    console.log('drawWorld');
+    console.log('shape circle = ', this.cellShapeCircle);
+    console.log('DecompositionFX = ', this.decompositionFX);
+
     this.ctx.save();
 
     if (this.firstRender) {
@@ -322,6 +331,19 @@ export class ConwayEngine {
 
   public setShowGridLines(showGridLines: boolean) {
     this.showGridLines = showGridLines;
+    this.firstRender = true;
+  }
+
+  public setCellShapeCircle(cellShapeCircle: boolean) {
+    this.cellShapeCircle = cellShapeCircle;
+  }
+
+  public setDecompositionFX(decompositionFX: boolean) {
+    this.decompositionFX = decompositionFX;
+  }
+
+  public setFillRandomRateInPercent(fillRandomRateInPercent: number) {
+    this.fillRandomRateInPercent = fillRandomRateInPercent;
   }
 
   public reset() {
@@ -377,18 +399,15 @@ export class ConwayEngine {
     this.colorGrid = color;
   }
 
-  public async setSettings(settings: Partial<ConwaySettingsType>) {
-    if (settings.cellSize) {
-      this.setCellSize(settings.cellSize);
-      this.cellRadius = this.cellSizeInPx / 2 - 1;
-      this.renderCellSize = this.cellSizeInPx - 1;
-    }
-    if (settings.showGridLines) this.setShowGridLines(settings.showGridLines);
-    if (settings.cellColor) this.setColorCell(settings.cellColor);
-    if (settings.gridColor) this.setColorGrid(settings.gridColor);
-    if (settings.fillRandomRateInPercent) this.fillRandomRateInPercent = settings.fillRandomRateInPercent;
-    if (settings.decompositionFX) this.decompositionFX = settings.decompositionFX;
-    if (settings.cellShapeCircle) this.cellShapeCircle = settings.cellShapeCircle;
-    return Promise.resolve();
+  public setSettings(settings: ConwaySettingsType) {
+    this.setCellSize(settings.cellSize);
+    this.cellRadius = this.cellSizeInPx / 2 - 1;
+    this.renderCellSize = this.cellSizeInPx - 1;
+    this.setShowGridLines(settings.showGridLines);
+    this.setColorCell(settings.cellColor);
+    this.setColorGrid(settings.gridColor);
+    this.setFillRandomRateInPercent(settings.fillRandomRateInPercent);
+    this.setDecompositionFX(settings.decompositionFX);
+    this.setCellShapeCircle(settings.cellShapeCircle);
   }
 }

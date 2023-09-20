@@ -59,7 +59,6 @@ export const ConwayWorld = (props: ConwayWorldProps) => {
     if (nbGenerations === 0) {
       totalTime.current = 0;
       generations.current = 0;
-      //previousTime.current = 0;
       averageFps.current = 0;
     }
   }, [nbGenerations, averageElapsedTime, totalTime.current, generations.current, needUpdate]);

@@ -62,10 +62,7 @@ export const Navbar = () => {
   };
 
   const handleNextStepClick = () => {
-    setIsRunning(currentState => {
-      currentState = !currentState;
-      return currentState;
-    });
+    setIsRunning(!isSettingsDialogOpen);
   };
 
   const handleModalClose = () => {

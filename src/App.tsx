@@ -21,18 +21,18 @@ const App = () => {
 
   useEffect(() => {
     if (windowSize.width > 0 && windowSize.height > 0 && conwayEngine) {
-      console.log('Cols : ' + Math.floor(windowSize.width / conwaySettings.cellSize));
-      console.log('Rows : ' + Math.floor(windowSize.height / conwaySettings.cellSize));
       if (!isReady) {
-        conwayEngine.setSettings(conwaySettings);
         conwayEngine.initWorld(windowSize.width, windowSize.height);
-        conwayEngine.setShowGridLines(conwaySettings.showGridLines);
         conwayEngine.generateRandomWorld().then(() => {
           setIsReady(true);
         });
       }
     }
-  }, [windowSize, conwaySettings, conwayEngine]);
+  }, [windowSize, conwayEngine]);
+
+  useEffect(() => {
+    conwayEngine.setSettings(conwaySettings);
+  }, [conwaySettings]);
 
   const conwayContextValue: ConwayContextType = {
     conwayEngine: conwayEngine,

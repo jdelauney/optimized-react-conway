@@ -12,15 +12,13 @@ type ConwaySettingsModalProps = {
 export const ConwaySettingsModal = (props: ConwaySettingsModalProps) => {
   const { isOpen, onAction, onClose } = props;
 
-  const { setIsReady } = useContext(ConwayContext);
+  //const { setIsReady } = useContext(ConwayContext);
 
-  useEffect(() => {
-    setIsReady(!isOpen);
-  }, [isOpen]);
+  // useEffect(() => {
+  //   setIsReady(!isOpen);
+  // }, [isOpen]);
 
   const handleActionModalClick = () => {
-    console.log('Action');
-
     if (onAction) {
       onAction();
     }
