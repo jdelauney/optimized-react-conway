@@ -1,4 +1,6 @@
+import { useContext, useEffect } from 'react';
 import { ModalDialog } from '../../../components/ModalDialog/ModalDialog';
+import { ConwayContext } from '../../../contexts/ConwayContext';
 import { ConwaySettingsForm } from './ConwaySettingsForm';
 
 type ConwaySettingsModalProps = {
@@ -10,7 +12,15 @@ type ConwaySettingsModalProps = {
 export const ConwaySettingsModal = (props: ConwaySettingsModalProps) => {
   const { isOpen, onAction, onClose } = props;
 
+  const { setIsReady } = useContext(ConwayContext);
+
+  useEffect(() => {
+    setIsReady(!isOpen);
+  }, [isOpen]);
+
   const handleActionModalClick = () => {
+    console.log('Action');
+
     if (onAction) {
       onAction();
     }
@@ -20,15 +30,6 @@ export const ConwaySettingsModal = (props: ConwaySettingsModalProps) => {
     if (onClose) {
       onClose();
     }
-  };
-
-  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log('submit');
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('change');
   };
 
   return (
@@ -42,10 +43,11 @@ export const ConwaySettingsModal = (props: ConwaySettingsModalProps) => {
       hasFooterActionButton={true}
       actionButtonText='Valider'
       closeButtonText='Fermer'
+      attachedFormId='conway-settings-forms'
       onAction={handleActionModalClick}
       onClose={handleCloseModalClick}
     >
-      <ConwaySettingsForm onSubmit={handleFormSubmit} onInputChange={handleInputChange} />
+      <ConwaySettingsForm id='conway-settings-forms' />
     </ModalDialog>
   );
 };
