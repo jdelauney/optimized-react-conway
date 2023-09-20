@@ -27,7 +27,7 @@ type InputProps = {
 } & InputHTMLAttributes<HTMLInputElement>;
 
 export const Input = (props: InputProps) => {
-  const { label, Icon, placeholder, type, name, autoComplete, inline, onChange } = props;
+  const { label, Icon, placeholder, type, name, autoComplete, inline, onChange, ...rest } = props;
   return (
     <div className={`flex w-[20rem]  ${inline ? 'flex-row items-center' : 'flex-col'} gap-1`}>
       {label && (
@@ -40,12 +40,14 @@ export const Input = (props: InputProps) => {
         <input
           type={type}
           name={name}
+          id={name}
           className={
             'w-full h-full  bg-transparent outline-none focus:outline-none flex items-center text-sm text-slate-400 focus:text-slate-200 pl-6 pr-3'
           }
           placeholder={placeholder}
           autoComplete={autoComplete}
           onChange={onChange}
+          {...rest}
         />
       </div>
     </div>
