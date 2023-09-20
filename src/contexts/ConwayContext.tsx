@@ -15,6 +15,12 @@ export type ConwayContextType = {
   setAverageElapsedTime: Dispatch<SetStateAction<number>>;
   needUpdate: boolean;
   setNeedUpdate: Dispatch<SetStateAction<boolean>>;
+  backgroundColor: string;
+  setBackgroundColor: Dispatch<SetStateAction<string>>;
+  fps: number;
+  setFPS: Dispatch<SetStateAction<number>>;
+  isLooping: boolean;
+  setIsLooping: Dispatch<SetStateAction<boolean>>;
 };
 
 export const ConwayContext = createContext<ConwayContextType>({
@@ -24,10 +30,10 @@ export const ConwayContext = createContext<ConwayContextType>({
   conwaySettings: {
     cellSize: 0,
     randomFillRate: 0,
-    backgroundColor: '',
     cellColor: '',
     showGridLines: false,
     gridColor: '',
+    fillRandomRateInPercent: 0,
   },
   setConwaySettings: () => {},
   nbGenerations: 0,
@@ -38,4 +44,8 @@ export const ConwayContext = createContext<ConwayContextType>({
   setAverageElapsedTime: () => {},
   needUpdate: false,
   setNeedUpdate: () => {},
+  backgroundColor: '',
+  setBackgroundColor: () => {},
+  fps: 0,
+  setFPS: () => {},
 });
