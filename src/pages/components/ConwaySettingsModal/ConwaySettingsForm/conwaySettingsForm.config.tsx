@@ -29,7 +29,7 @@ export const getConwaySettingsFormConfig = (currentSettings: ConwayFormSetting):
     },
     {
       id: 'conwaySettings-randFillRate',
-      name: 'randFillRate',
+      name: 'randomFillRate',
       type: 'number',
       label: 'Random fill rate',
       placeholder: 'Random fill rate',
