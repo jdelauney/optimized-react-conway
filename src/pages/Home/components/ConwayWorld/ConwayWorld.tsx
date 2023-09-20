@@ -1,5 +1,6 @@
-import { CSSProperties, HTMLAttributes, useCallback, useContext, useEffect, useLayoutEffect, useRef } from 'react';
+import { CSSProperties, HTMLAttributes, useCallback, useContext, useEffect, useRef } from 'react';
 import { ConwayContext, ConwayContextType } from '../../../../contexts/ConwayContext';
+import { useRequestAnimationFrame } from '../../../../hooks/useRequestAnimationFrame';
 
 type ConwayWorldProps = HTMLAttributes<HTMLDivElement>;
 
@@ -52,6 +53,7 @@ export const ConwayWorld = (props: ConwayWorldProps) => {
         previousState = averageFps.current;
         return previousState;
       });
+
       setNeedUpdate(false);
       return;
     }
@@ -69,7 +71,7 @@ export const ConwayWorld = (props: ConwayWorldProps) => {
 
       generations.current += 1;
       totalTime.current += deltaTime;
-      //previousTime.current = deltaTime;
+
       if (generations.current % 10 === 0) {
         setNeedUpdate(currentState => {
           currentState = !currentState;
@@ -80,55 +82,7 @@ export const ConwayWorld = (props: ConwayWorldProps) => {
     [totalTime.current, generations.current, conwayEngine, needUpdate]
   );
 
-  useLayoutEffect(() => {
-    if (isRunning) {
-      let timerId: number;
-
-      let msStart: number;
-      let startTime: number;
-      let timeElapsed = 0;
-
-      const fps = 30;
-      const msPerFrame = 1000 / fps;
-      let frames = 0;
-
-      const animate = (time: number) => {
-        if (!msStart) {
-          msStart = time;
-          startTime = msStart;
-        }
-        animateCallback(timeElapsed);
-
-        timeElapsed = time - msStart;
-
-        const dt = time - startTime;
-
-        frames++;
-        if (dt >= 1000) {
-          averageFps.current = (frames * 1000) / dt;
-          frames = 0;
-          startTime = msStart;
-        }
-
-        if (isLooping) {
-          timerId = requestAnimationFrame(animate);
-        } else {
-          cancelAnimationFrame(timerId);
-          setIsRunning(previousState => {
-            previousState = !previousState;
-            return previousState;
-          });
-        }
-        if (timeElapsed < msPerFrame) return;
-        const excessTime = timeElapsed % msPerFrame;
-        msStart = time - excessTime;
-      };
-
-      timerId = requestAnimationFrame(animate);
-
-      return () => cancelAnimationFrame(timerId);
-    }
-  }, [isRunning]);
+  averageFps.current = useRequestAnimationFrame(isRunning, setIsRunning, isLooping, animateCallback);
 
   const inlineStyle: CSSProperties = { backgroundColor: backgroundColor };
 
