@@ -40,26 +40,20 @@ export const ConwaySettingsForm = (props: ConwaySettingsFormProps) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     let newValue: string | boolean | number = value;
-    // let canUpdate = true;
 
     if (name === 'backgroundColor') {
       setBgColor(newValue);
       return;
     }
 
-    if (name === 'showGridLines') {
-      console.log('Input change ===> : ', name, e.target.checked);
-
+    if (e.target.type === 'checkbox') {
       newValue = e.target.checked;
     }
-    console.log('Input change : ', name, newValue);
+
     setNewSettings({
       ...newSettings,
       [name]: newValue,
     });
-
-    //   return;
-    // }
   };
 
   return (
@@ -96,6 +90,18 @@ export const ConwaySettingsForm = (props: ConwaySettingsFormProps) => {
         label='Cell color'
         value={newSettings.cellColor}
         Icon={<VscSymbolColor />}
+        onChange={handleInputChange}
+      />
+      <Switch
+        name='decompositionFX'
+        label='enable decomposition FX'
+        checkState={newSettings.decompositionFX}
+        onChange={handleInputChange}
+      />
+      <Switch
+        name='cellShapeCircle'
+        label='Cell shape circle'
+        checkState={newSettings.cellShapeCircle}
         onChange={handleInputChange}
       />
       <Switch
