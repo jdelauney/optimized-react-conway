@@ -1,4 +1,4 @@
-import { HTMLAttributes, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { CSSProperties, HTMLAttributes, useCallback, useContext, useEffect, useLayoutEffect, useRef } from 'react';
 import { ConwayContext, ConwayContextType } from '../../../../contexts/ConwayContext';
 
 type ConwayWorldProps = HTMLAttributes<HTMLDivElement>;
@@ -10,6 +10,7 @@ export const ConwayWorld = (props: ConwayWorldProps) => {
   const {
     conwayEngine,
     isRunning,
+    setIsRunning,
     nbGenerations,
     setNbGenerations,
     isReady,
@@ -17,10 +18,15 @@ export const ConwayWorld = (props: ConwayWorldProps) => {
     setAverageElapsedTime,
     needUpdate,
     setNeedUpdate,
+    backgroundColor,
+    setFPS,
+    isLooping,
   }: ConwayContextType = useContext(ConwayContext);
 
   const totalTime = useRef<number>(0);
   const generations = useRef<number>(0);
+  const previousTime = useRef<number>(0);
+  const averageFps = useRef<number>(0);
 
   useEffect(() => {
     if (conwayEngine && canvasRef.current !== null && isReady) {
@@ -42,50 +48,81 @@ export const ConwayWorld = (props: ConwayWorldProps) => {
           return previousState;
         });
       }
+
+      setFPS(previousState => {
+        previousState = averageFps.current;
+        return previousState;
+      });
       setNeedUpdate(false);
+      return;
+    }
+    if (nbGenerations === 0) {
+      totalTime.current = 0;
+      generations.current = 0;
+      //previousTime.current = 0;
+      averageFps.current = 0;
     }
   }, [nbGenerations, averageElapsedTime, totalTime.current, generations.current, needUpdate]);
 
-  const animateCallback = useCallback(() => {
-    if (conwayEngine) {
-      const start = performance.now();
-      conwayEngine.genNextStep();
-      conwayEngine.drawWorld();
-      const end = performance.now();
-      const elapsedTime = end - start;
-      generations.current += 1;
-      totalTime.current += elapsedTime;
-      if (generations.current % 10 === 0) {
-        setNeedUpdate(currentState => {
-          currentState = !currentState;
-          return currentState;
-        });
+  const animateCallback = useCallback(
+    (currentTime: number) => {
+      const deltaTime = currentTime - previousTime.current;
+      if (conwayEngine) {
+        conwayEngine.genNextStep();
+        conwayEngine.drawWorld();
+
+        generations.current += 1;
+        totalTime.current += deltaTime;
+        previousTime.current = currentTime;
+        if (generations.current % 10 === 0) {
+          setNeedUpdate(currentState => {
+            currentState = !currentState;
+            return currentState;
+          });
+        }
       }
-    }
-  }, [totalTime.current, generations.current, conwayEngine, needUpdate]);
+    },
+    [totalTime.current, generations.current, conwayEngine, needUpdate]
+  );
 
   useLayoutEffect(() => {
     if (isRunning) {
       let timerId: number;
 
-      let msPrev = window.performance.now();
-      const fps = 25;
+      let msPrev = 0; //window.performance.now();
+      let startTime = msPrev; //Date.now();
+
+      const fps = 40;
       const msPerFrame = 1000 / fps;
-      //let frames = 0;
+      let frames = 0;
 
-      const animate = () => {
-        animateCallback();
-        timerId = requestAnimationFrame(animate);
+      const animate = (time: number) => {
+        const msNow = time; // window.performance.now();
 
-        const msNow = window.performance.now();
+        animateCallback(time);
+        const dt = msNow - startTime;
+
+        frames++;
+        if (dt > 1000) {
+          averageFps.current = (frames * 1000) / dt;
+          frames = 0;
+          startTime = msNow;
+        }
+
+        if (isLooping) {
+          timerId = requestAnimationFrame(animate);
+        } else {
+          cancelAnimationFrame(timerId);
+          setIsRunning(previousState => {
+            previousState = !previousState;
+            return previousState;
+          });
+        }
+
         const msPassed = msNow - msPrev;
-
         if (msPassed < msPerFrame) return;
-
         const excessTime = msPassed % msPerFrame;
         msPrev = msNow - excessTime;
-
-        //frames++;
       };
 
       // setTimeout(function () {
@@ -97,13 +134,11 @@ export const ConwayWorld = (props: ConwayWorldProps) => {
     }
   }, [isRunning]);
 
+  const inlineStyle: CSSProperties = { backgroundColor: backgroundColor };
+
   return (
-    <div className='w-full h-full' {...rest}>
-      {isReady ? (
-        <canvas ref={canvasRef} className='w-full h-full' width={'100%'} height={'100%'} />
-      ) : (
-        <div className='w-full h-full flex justify-center items-center text-2xl text-gray-100'>Loading...</div>
-      )}
+    <div className='w-full h-full' {...rest} style={inlineStyle}>
+      <canvas ref={canvasRef} className='w-full h-full' width={'100%'} height={'100%'} />
     </div>
   );
 };
