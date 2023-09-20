@@ -1,27 +1,38 @@
-# React + TypeScript + Vite
+# React + TypeScript : Optimized Conway - Game of Life
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Description
 
-Currently, two official plugins are available:
+Optimized project of Conway's game of life, made with React and Typescript. The game of life is a cellular automaton that simulates the evolution of a population of cells according to simple rules. The cells are represented by the squares or circles of a grid, and can be in two states: alive or dead. The evolution of the population is determined by the state of the cells adjacent to each cell. The rules are as follows:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- A living cell with fewer than two living neighbors dies.
+- A living cell with two or three living neighbors remains alive.
+- A living cell with more than three living neighbors dies.
+- A dead cell with exactly three living neighbors becomes alive.
 
-## Expanding the ESLint configuration
+The optimization techniques include memoization, rendering on Canvas with requestAnimationFrame.
+It includes many tricks to improve performances like 1D arrays instead 2D arrays with the use of native Uint8Array and Uint32Array to store the cells state and others information. It also uses Double/Triple buffering to avoid unnecessary operations and some others small tricks.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+On React side, i'm using TaildwindCSS for quick styling. You'll also find a custom hook `useRequestAnimationFrame` to handle the game loop with improve performance time calculations and a FPS rate limiter. On the game side, i'm using a class witch can be use out of React.
 
-- Configure the top-level `parserOptions` property like this:
+You'll also find some commons tips an tricks with React components....
 
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
+## Demo
+
+## Installation
+
+```bash
+$ pnpm install
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+or your favorite package manager
+
+## Running the app
+
+```bash
+# development
+$ pnpm dev
+```
+
+## License
+
+This project is [MIT licensed](LICENSE).
