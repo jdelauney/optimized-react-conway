@@ -34,6 +34,8 @@ export const ConwayContext = createContext<ConwayContextType>({
     showGridLines: false,
     gridColor: '',
     fillRandomRateInPercent: 0,
+    decompositionFX: false,
+    cellShapeCircle: false,
   },
   setConwaySettings: () => {},
   nbGenerations: 0,
@@ -48,4 +50,6 @@ export const ConwayContext = createContext<ConwayContextType>({
   setBackgroundColor: () => {},
   fps: 0,
   setFPS: () => {},
+  isLooping: false,
+  setIsLooping: () => {},
 });
