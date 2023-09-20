@@ -3,6 +3,7 @@ import { Button } from '../../../components/ui/Button/Button';
 import { ConwayContext } from '../../../contexts/ConwayContext';
 import { RenderModal } from '../../../components/ModalDialog/RenderModal';
 import { ConwaySettingsModal } from '../ConwaySettingsModal/ConwaySettingsModal';
+import { refreshPage } from '../../../utils/windowUtils';
 
 export const Navbar = () => {
   const {
@@ -62,13 +63,20 @@ export const Navbar = () => {
     setIsRunning(true);
   };
 
+  const handleRefreshPageClick = () => {
+    refreshPage();
+  };
+
   return (
     <>
       <div className={'relative'}>
         <nav className='fixed top-0 left-0 right-0 w-full flex justify-end items-center py-3 px-4 gap-3 bg-slate-800/60'>
-          <span className='text-2xl leading-none font-bold text-gray-100 border-e-2 border-slate-400 mr-2 pr-2'>
+          <h1
+            className='text-2xl cursor-pointer leading-none font-bold text-gray-100 border-e-2 border-slate-400 mr-2 pr-2 hover:text-primary-400'
+            onClick={handleRefreshPageClick}
+          >
             Conway's Game of Life
-          </span>
+          </h1>
           <div className='flex-grow flex items-center divide-x-2 divide-slate-300'>
             <span className='leading-none font-bold text-gray-100 mr-2 pr-2 text-sm'>
               Total cells : <span className='text-blue-300 font-normal'>{isNaN(totalCell) ? '-' : totalCell}</span>
