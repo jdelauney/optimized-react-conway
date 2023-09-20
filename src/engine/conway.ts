@@ -256,10 +256,6 @@ export class ConwayEngine {
       throw new Error('canvasRef or canvas Ctx must not be null');
     }
 
-    console.log('drawWorld');
-    console.log('shape circle = ', this.cellShapeCircle);
-    console.log('DecompositionFX = ', this.decompositionFX);
-
     this.ctx.save();
 
     if (this.firstRender) {
