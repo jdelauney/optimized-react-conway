@@ -11,6 +11,7 @@ type ModalDialogProps = PropsWithChildren<{
   actionButtonText?: string;
   closeButtonText?: string;
   title?: string;
+  attachedFormId?: string;
   onAction?: () => void;
   onClose?: () => void;
 }>;
@@ -62,6 +63,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
     hasFooterActionButton,
     actionButtonText,
     closeButtonText,
+    attachedFormId,
     onAction,
     onClose,
   } = props;
@@ -124,7 +126,12 @@ export const ModalDialog = (props: ModalDialogProps) => {
       {hasFooter && (
         <ModalDialogFooter>
           {hasFooterActionButton && (
-            <Button type='submit' variant='primary' onClick={handleActionModalClick}>
+            <Button
+              type='submit'
+              form={attachedFormId && attachedFormId}
+              variant='primary'
+              onClick={handleActionModalClick}
+            >
               {actionButtonText ? actionButtonText : 'Ok'}
             </Button>
           )}
