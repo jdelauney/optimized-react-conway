@@ -1,5 +1,7 @@
 // Conway's Game of Life
 
+const PI2 = Math.PI * 2;
+
 export type Position2D = {
   x: number;
   y: number;
@@ -17,6 +19,8 @@ export const CONWAY_DEFAULT_SETTINGS = {
   cellColor: '#fdba74',
   gridColor: '#1c1917',
   fillRandomRateInPercent: 70,
+  decompositionFX: true,
+  cellShapeCircle: true,
 };
 export type ConwaySettingsType = typeof CONWAY_DEFAULT_SETTINGS;
 
@@ -28,7 +32,7 @@ export class ConwayEngine {
   private maxCell: number;
   private maxx: number;
   private maxy: number;
-  private cellSizeInPx: number;
+  private cellSizeInPx: number = 10;
   private displayWidth: number;
   private displayHeight: number;
   private reciprocalMaxCol: number;
@@ -43,14 +47,19 @@ export class ConwayEngine {
   private precalcCellPos!: Position2D[];
   private canvasRef: HTMLCanvasElement | null;
   private ctx: CanvasRenderingContext2D | null;
-  private showGridLines: boolean = false;
+  private showGridLines: boolean = true;
   private colorCell: string = '#fdba74';
-  private colorGrid: string = '#1c1917';
+  private colorGrid: string = '#f1f1f1'; //'#1c1917';
   private cellAlive: number = 0;
   private fillRandomRateInPercent: number = 70;
+  private decompositionFX: boolean = true;
+  private cellShapeCircle: boolean = true;
+  private cellRadius: number = 4;
+  private offsetCell: number = 1;
+  private renderCellSize: number = 9;
+  private firstRender: boolean = true;
 
   constructor() {
-    this.cellSizeInPx = 0;
     this.displayWidth = 0;
     this.displayHeight = 0;
     this.maxCol = 0;
@@ -128,18 +137,6 @@ export class ConwayEngine {
     if (y < this.maxy && x < this.maxx) this.nbNeighbors[index + this.neighborsDeltaIndex[7]]++;
   }
 
-  /*
-  private getLivingCells() {
-    let livingCells = [];
-    for (let i = 0; i < this.maxCell; i++) {
-      if (this.gameBoard[i] === 1) {
-        livingCells.push(i);
-      }
-    }
-    return livingCells;
-  }
-  */
-
   private computeCellsToLive() {
     this.cellAlive = 0;
     for (let i = 0; i < this.maxCell; i++) {
@@ -183,17 +180,10 @@ export class ConwayEngine {
   }
 
   public genNextStep() {
-    // On récupère uniquement les cellules vivantes
-    //let livingCells = this.getLivingCells();
-
     // Reset des voisins
     this.nbNeighbors.fill(0);
 
     // On mets a jour le tableau des voisins
-    //for (let i = 0; i < livingCells.length; i++) {
-    // console.log('Cell alive: ', this.cellAlive);
-    // console.log('Length: ', this.nextLivingCells.length);
-
     for (let i = 0; i < this.cellAlive; i++) {
       //this.updateNeighbors(livingCells[i]);
       this.updateNeighbors(this.nextLivingCells[i]);
@@ -210,55 +200,89 @@ export class ConwayEngine {
     this.nbGenerations++;
   }
 
+  private drawSquare(x: number, y: number, size: number, color: string) {
+    this.ctx!.fillStyle = color;
+    this.ctx!.fillRect(x, y, size, size);
+  }
+
+  private drawCircle(x: number, y: number, radius: number, color: string) {
+    //this.ctx!.beginPath();
+    this.ctx!.arc(x + radius, y + radius, radius, 0, PI2, false);
+    //this.ctx!.closePath();
+    this.ctx!.fillStyle = color;
+    this.ctx!.fill();
+  }
+
+  private drawCell(x: number, y: number, color: string) {
+    if (this.cellShapeCircle) {
+      this.drawCircle(x + this.offsetCell, y + this.offsetCell, this.cellRadius, color);
+    } else {
+      this.drawSquare(x + this.offsetCell, y + this.offsetCell, this.renderCellSize, color);
+    }
+  }
+
+  private eraseCell(x: number, y: number) {
+    this.ctx!.clearRect(x + this.offsetCell, y + this.offsetCell, this.renderCellSize, this.renderCellSize);
+  }
+
+  public drawGrid() {
+    if (this.showGridLines) {
+      //this.ctx!.beginPath();
+      //this.ctx!.lineWidth = 0.5;
+      this.ctx!.strokeStyle = this.colorGrid;
+
+      for (let i = 0; i <= this.maxCol; i++) {
+        const delta = i * this.cellSizeInPx;
+        this.ctx!.moveTo(delta, 0);
+        this.ctx!.lineTo(delta, this.displayHeight);
+        this.ctx!.stroke();
+      }
+
+      for (let i = 0; i <= this.maxRow; i++) {
+        const delta = i * this.cellSizeInPx;
+        this.ctx!.moveTo(0, delta);
+        this.ctx!.lineTo(this.displayWidth, delta);
+        this.ctx!.stroke();
+      }
+      //this.ctx!.closePath();
+    }
+  }
   public drawWorld() {
     if (this.canvasRef === null || this.ctx === null) {
       throw new Error('canvasRef or canvas Ctx must not be null');
     }
     this.ctx.save();
-    this.ctx.beginPath();
-    //this.ctx.clearRect(0, 0, this.canvasRef.width, this.canvasRef.height);
+
+    if (this.firstRender) {
+      this.drawGrid();
+      this.firstRender = false;
+    }
 
     for (let i = 0; i < this.maxCell; i++) {
       const newValue = this.gameBoard[i];
       const { x, y } = this.precalcCellPos[i];
-
       const px = x * this.cellSizeInPx;
       const py = y * this.cellSizeInPx;
 
-      // Dessiner les cellules mortes avec une couleur basée sur leur temps de décomposition
-      if (this.lastBoard[i] === 0 && newValue === 0) {
-        if (this.decompositionTime[i] > 0) {
-          const intensity = this.decompositionTime[i] * 0.01; // 1/100
-          this.ctx.fillStyle = this.adjustColorIntensity(this.colorCell, intensity);
-          this.ctx.fillRect(px, py, this.cellSizeInPx, this.cellSizeInPx);
-        } else {
-          this.ctx.clearRect(px, py, this.cellSizeInPx, this.cellSizeInPx);
+      this.ctx.beginPath();
+      if (this.decompositionFX) {
+        // Dessiner les cellules mortes avec une couleur basée sur leur temps de décomposition
+        if (this.lastBoard[i] === 0 && newValue === 0) {
+          if (this.decompositionTime[i] > 0) {
+            const intensity = this.decompositionTime[i] * 0.01; // 1/100
+            this.drawCell(px, py, this.adjustColorIntensity(this.colorCell, intensity));
+          } else {
+            this.eraseCell(px, py);
+          }
         }
       }
 
-      // Dessiner les cellules qui sont passées de mortes à vivantes
-      if (this.lastBoard[i] === 0 && newValue === 1) {
-        this.ctx.fillStyle = this.colorCell;
-        this.ctx.fillRect(px, py, this.cellSizeInPx, this.cellSizeInPx);
-      }
-    }
-
-    if (this.showGridLines) {
-      this.ctx.lineWidth = 1;
-      this.ctx.strokeStyle = this.colorGrid;
-
-      for (let i = 0; i <= this.maxCol; i++) {
-        const delta = i * this.cellSizeInPx;
-        this.ctx.moveTo(delta, 0);
-        this.ctx.lineTo(delta, this.displayHeight);
-        this.ctx.stroke();
-      }
-
-      for (let i = 0; i <= this.maxRow; i++) {
-        const delta = i * this.cellSizeInPx;
-        this.ctx.moveTo(0, delta);
-        this.ctx.lineTo(this.displayWidth, delta);
-        this.ctx.stroke();
+      if (this.lastBoard[i] !== newValue) {
+        if (newValue === 0) {
+          this.eraseCell(px, py);
+        } else {
+          this.drawCell(px, py, this.colorCell);
+        }
       }
     }
 
@@ -354,11 +378,17 @@ export class ConwayEngine {
   }
 
   public async setSettings(settings: Partial<ConwaySettingsType>) {
-    if (settings.cellSize) this.setCellSize(settings.cellSize);
+    if (settings.cellSize) {
+      this.setCellSize(settings.cellSize);
+      this.cellRadius = this.cellSizeInPx / 2 - 1;
+      this.renderCellSize = this.cellSizeInPx - 1;
+    }
     if (settings.showGridLines) this.setShowGridLines(settings.showGridLines);
     if (settings.cellColor) this.setColorCell(settings.cellColor);
     if (settings.gridColor) this.setColorGrid(settings.gridColor);
     if (settings.fillRandomRateInPercent) this.fillRandomRateInPercent = settings.fillRandomRateInPercent;
+    if (settings.decompositionFX) this.decompositionFX = settings.decompositionFX;
+    if (settings.cellShapeCircle) this.cellShapeCircle = settings.cellShapeCircle;
     return Promise.resolve();
   }
 }
