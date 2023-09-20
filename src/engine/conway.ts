@@ -158,9 +158,9 @@ export class ConwayEngine {
 
   private adjustColorIntensity(hexColor: string, intensity: number) {
     // Convertir la couleur hexadécimale en RGB
-    let r: number = parseInt(hexColor.substring(1, 2), 16);
-    let g: number = parseInt(hexColor.substring(3, 2), 16);
-    let b: number = parseInt(hexColor.substring(5, 2), 16);
+    let r: number = parseInt(hexColor.substring(1, 3), 16);
+    let g: number = parseInt(hexColor.substring(3, 5), 16);
+    let b: number = parseInt(hexColor.substring(5, 7), 16);
 
     // Ajuster chaque composante de couleur en fonction de l'intensité
     r = Math.floor(r * intensity);
