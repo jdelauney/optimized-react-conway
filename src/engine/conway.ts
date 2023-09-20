@@ -16,7 +16,7 @@ export const CONWAY_DEFAULT_SETTINGS = {
   showGridLines: true,
   cellColor: '#fdba74',
   gridColor: '#1c1917',
-  backgroundColor: '#000000',
+  fillRandomRateInPercent: 70,
 };
 export type ConwaySettingsType = typeof CONWAY_DEFAULT_SETTINGS;
 
@@ -35,10 +35,11 @@ export class ConwayEngine {
   private nbGenerations: number;
   private nextBoard!: Uint8Array;
   private gameBoard!: Uint8Array;
+  private nextLivingCells!: Uint32Array;
   private lastBoard!: Uint8Array;
   private nbNeighbors!: Uint8Array;
   private decompositionTime!: Uint8Array;
-  private neighborsDeltaIndex!: number[];
+  private neighborsDeltaIndex!: Array<number>;
   private precalcCellPos!: Position2D[];
   private canvasRef: HTMLCanvasElement | null;
   private ctx: CanvasRenderingContext2D | null;
@@ -46,6 +47,7 @@ export class ConwayEngine {
   private colorCell: string = '#fdba74';
   private colorGrid: string = '#1c1917';
   private cellAlive: number = 0;
+  private fillRandomRateInPercent: number = 70;
 
   constructor() {
     this.cellSizeInPx = 0;
@@ -58,8 +60,6 @@ export class ConwayEngine {
     this.maxy = 0;
     this.reciprocalMaxCol = 0;
     this.nbGenerations = 0;
-
-    this.init();
 
     this.canvasRef = null;
     this.ctx = null;
@@ -89,6 +89,10 @@ export class ConwayEngine {
     this.nextBoard = new Uint8Array(this.maxCell);
     this.lastBoard = new Uint8Array(this.maxCell);
     this.nbNeighbors = new Uint8Array(this.maxCell);
+
+    this.nextLivingCells = new Uint32Array(Math.floor(this.maxCell * ((this.fillRandomRateInPercent + 5) / 100))).fill(
+      0
+    );
     this.decompositionTime = new Uint8Array(this.maxCell).fill(0);
     this.precalcCellPos = new Array();
 
@@ -124,6 +128,7 @@ export class ConwayEngine {
     if (y < this.maxy && x < this.maxx) this.nbNeighbors[index + this.neighborsDeltaIndex[7]]++;
   }
 
+  /*
   private getLivingCells() {
     let livingCells = [];
     for (let i = 0; i < this.maxCell; i++) {
@@ -133,6 +138,7 @@ export class ConwayEngine {
     }
     return livingCells;
   }
+  */
 
   private computeCellsToLive() {
     this.cellAlive = 0;
@@ -143,6 +149,7 @@ export class ConwayEngine {
         (!isAlive && this.nbNeighbors[i] === 3);
       if (needLive) {
         this.cellAlive++;
+        this.nextLivingCells[this.cellAlive] = i;
         this.decompositionTime[i] = 100;
       } else if (this.decompositionTime[i] > 0) {
         this.decompositionTime[i] -= 25;
@@ -177,14 +184,19 @@ export class ConwayEngine {
 
   public genNextStep() {
     // On récupère uniquement les cellules vivantes
-    let livingCells = this.getLivingCells();
+    //let livingCells = this.getLivingCells();
 
     // Reset des voisins
     this.nbNeighbors.fill(0);
 
     // On mets a jour le tableau des voisins
-    for (let i = 0; i < livingCells.length; i++) {
-      this.updateNeighbors(livingCells[i]);
+    //for (let i = 0; i < livingCells.length; i++) {
+    // console.log('Cell alive: ', this.cellAlive);
+    // console.log('Length: ', this.nextLivingCells.length);
+
+    for (let i = 0; i < this.cellAlive; i++) {
+      //this.updateNeighbors(livingCells[i]);
+      this.updateNeighbors(this.nextLivingCells[i]);
     }
 
     // On récupère uniquement les cellules qui doivent vivre
@@ -296,19 +308,20 @@ export class ConwayEngine {
     this.nbGenerations = 0;
   }
 
-  public initWorld(width: number, height: number, cellSizeInPx: number, canvasRef?: HTMLCanvasElement) {
+  public initWorld(width: number, height: number, canvasRef?: HTMLCanvasElement) {
     this.setDimension(width, height);
-    this.setCellSize(cellSizeInPx);
     if (canvasRef) this.setCanvasRef(canvasRef);
     this.init();
   }
 
-  public async generateRandomWorld(fillRateInPercent: number) {
+  public async generateRandomWorld() {
     this.cellAlive = 0;
     for (let i = 0; i < this.maxCell; i++) {
-      this.gameBoard[i] = (await this.randomBooleanWeighted(fillRateInPercent)) ? 1 : 0;
+      this.gameBoard[i] = (await this.randomBooleanWeighted(this.fillRandomRateInPercent)) ? 1 : 0;
+      this.decompositionTime[i] = 0;
       if (this.gameBoard[i] === 1) {
         this.cellAlive++;
+        this.nextLivingCells[this.cellAlive] = i;
         this.decompositionTime[i] = 100;
       }
     }
@@ -338,5 +351,14 @@ export class ConwayEngine {
 
   public setColorGrid(color: string) {
     this.colorGrid = color;
+  }
+
+  public async setSettings(settings: Partial<ConwaySettingsType>) {
+    if (settings.cellSize) this.setCellSize(settings.cellSize);
+    if (settings.showGridLines) this.setShowGridLines(settings.showGridLines);
+    if (settings.cellColor) this.setColorCell(settings.cellColor);
+    if (settings.gridColor) this.setColorGrid(settings.gridColor);
+    if (settings.fillRandomRateInPercent) this.fillRandomRateInPercent = settings.fillRandomRateInPercent;
+    return Promise.resolve();
   }
 }
