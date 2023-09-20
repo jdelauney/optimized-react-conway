@@ -58,7 +58,7 @@ export const useRequestAnimationFrame = (
     }
     requestRef.current = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(requestRef.current!);
-  }, [isRunning]);
+  }, [isRunning, isLooping, animateCallback, setIsRunning]);
 
   return averageFpsRef.current;
 };

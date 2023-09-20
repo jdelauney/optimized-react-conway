@@ -46,3 +46,4 @@ export const InputFields = forwardRef((props: InputFieldsProps, ref) => {
     </>
   );
 });
+InputFields.displayName = 'InputFields';

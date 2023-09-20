@@ -7,7 +7,6 @@ type RenderModalProps = PropsWithChildren<{
 export const RenderModal = (props: RenderModalProps) => {
   const { children, wrapperId } = props;
 
-  //if (wrapperId === '') throw new Error('wrapperId is required and cannot be empty');
   const wrapperIdDefault = 'modal-wrapper';
 
   const [wrapperElement, setWrapperElement] = useState<HTMLElement | null>(null);
@@ -20,7 +19,7 @@ export const RenderModal = (props: RenderModalProps) => {
   };
 
   useLayoutEffect(() => {
-    let wrapperIdName = wrapperId ? wrapperId : wrapperIdDefault;
+    const wrapperIdName = wrapperId ?? wrapperIdDefault;
     let element = document.getElementById(wrapperIdName);
     let systemCreated = false;
 

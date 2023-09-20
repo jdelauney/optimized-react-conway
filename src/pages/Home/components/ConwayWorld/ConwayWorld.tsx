@@ -5,8 +5,6 @@ import { useRequestAnimationFrame } from '../../../../hooks/useRequestAnimationF
 type ConwayWorldProps = HTMLAttributes<HTMLDivElement>;
 
 export const ConwayWorld = (props: ConwayWorldProps) => {
-  const { children, ...rest } = props;
-
   const canvasRef = useRef(null);
   const {
     conwayEngine,
@@ -15,7 +13,6 @@ export const ConwayWorld = (props: ConwayWorldProps) => {
     nbGenerations,
     setNbGenerations,
     isReady,
-    averageElapsedTime,
     setAverageElapsedTime,
     needUpdate,
     setNeedUpdate,
@@ -33,7 +30,7 @@ export const ConwayWorld = (props: ConwayWorldProps) => {
       conwayEngine.setCanvasRef(canvasRef.current);
       conwayEngine.drawWorld();
     }
-  }, [isReady]);
+  }, [isReady, conwayEngine]);
 
   useEffect(() => {
     if (needUpdate) {
@@ -62,7 +59,7 @@ export const ConwayWorld = (props: ConwayWorldProps) => {
       generations.current = 0;
       averageFps.current = 0;
     }
-  }, [nbGenerations, averageElapsedTime, totalTime.current, generations.current, needUpdate]);
+  }, [nbGenerations, setAverageElapsedTime, needUpdate, setNeedUpdate, setNbGenerations, setFPS]);
 
   const animateCallback = useCallback(
     (deltaTime: number) => {
@@ -79,7 +76,7 @@ export const ConwayWorld = (props: ConwayWorldProps) => {
         });
       }
     },
-    [totalTime.current, generations.current, conwayEngine, needUpdate]
+    [conwayEngine, setNeedUpdate]
   );
 
   averageFps.current = useRequestAnimationFrame(isRunning, setIsRunning, isLooping, animateCallback);
@@ -87,7 +84,7 @@ export const ConwayWorld = (props: ConwayWorldProps) => {
   const inlineStyle: CSSProperties = { backgroundColor: backgroundColor };
 
   return (
-    <div className='w-full h-full' {...rest} style={inlineStyle}>
+    <div className='w-full h-full' {...props} style={inlineStyle}>
       <canvas ref={canvasRef} className='w-full h-full' width={'100%'} height={'100%'} />
     </div>
   );

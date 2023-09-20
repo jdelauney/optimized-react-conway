@@ -23,10 +23,7 @@ export const ConwaySettingsForm = forwardRef((props: ConwaySettingsFormProps, re
 
     setConwaySettings(newSettings);
 
-    setBackgroundColor(previousState => {
-      previousState = bgColor;
-      return previousState;
-    });
+    setBackgroundColor(bgColor);
 
     if (onFormSubmitted) {
       onFormSubmitted();
@@ -65,3 +62,4 @@ export const ConwaySettingsForm = forwardRef((props: ConwaySettingsFormProps, re
     </>
   );
 });
+ConwaySettingsForm.displayName = 'ConwaySettingsForm';

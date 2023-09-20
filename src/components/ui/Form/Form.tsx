@@ -21,3 +21,4 @@ export const Form = forwardRef((props: FormProps, ref) => {
     </form>
   );
 });
+Form.displayName = 'Form';

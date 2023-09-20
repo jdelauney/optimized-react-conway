@@ -24,8 +24,6 @@ export const CONWAY_DEFAULT_SETTINGS = {
 };
 export type ConwaySettingsType = typeof CONWAY_DEFAULT_SETTINGS;
 
-export type ConwayWorldType = ConwayCellType[];
-
 export class ConwayEngine {
   private maxCol: number;
   private maxRow: number;
@@ -106,7 +104,7 @@ export class ConwayEngine {
       0
     );
     this.decompositionTime = new Uint8Array(this.maxCell).fill(0);
-    this.precalcCellPos = new Array();
+    this.precalcCellPos = [];
 
     this.prepareBufferCellPosFromIndex();
 
@@ -160,9 +158,9 @@ export class ConwayEngine {
 
   private adjustColorIntensity(hexColor: string, intensity: number) {
     // Convertir la couleur hexadécimale en RGB
-    let r: number = parseInt(hexColor.substr(1, 2), 16);
-    let g: number = parseInt(hexColor.substr(3, 2), 16);
-    let b: number = parseInt(hexColor.substr(5, 2), 16);
+    let r: number = parseInt(hexColor.substring(1, 2), 16);
+    let g: number = parseInt(hexColor.substring(3, 2), 16);
+    let b: number = parseInt(hexColor.substring(5, 2), 16);
 
     // Ajuster chaque composante de couleur en fonction de l'intensité
     r = Math.floor(r * intensity);
@@ -179,7 +177,7 @@ export class ConwayEngine {
     const gs: string = g.toString(16).padStart(2, '0');
     const bs: string = b.toString(16).padStart(2, '0');
 
-    return '#' + rs + gs + bs;
+    return `#${rs}${gs}${bs}`;
   }
 
   public genNextStep() {
@@ -188,7 +186,6 @@ export class ConwayEngine {
 
     // On mets a jour le tableau des voisins
     for (let i = 0; i < this.cellAlive; i++) {
-      //this.updateNeighbors(livingCells[i]);
       this.updateNeighbors(this.nextLivingCells[i]);
     }
 
@@ -367,6 +364,7 @@ export class ConwayEngine {
   public async generateRandomWorld() {
     this.cellAlive = 0;
     for (let i = 0; i < this.maxCell; i++) {
+      // eslint-disable-next-line no-await-in-loop
       this.gameBoard[i] = (await this.randomBooleanWeighted(this.fillRandomRateInPercent)) ? 1 : 0;
       this.decompositionTime[i] = 0;
       if (this.gameBoard[i] === 1) {

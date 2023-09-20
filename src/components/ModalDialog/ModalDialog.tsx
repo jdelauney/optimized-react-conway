@@ -44,7 +44,7 @@ const ModalDialogHeader = (props: PropsWithChildren<{ title: string }>) => {
   );
 };
 
-const ModalDialogFooter = (props: PropsWithChildren<{}>) => {
+const ModalDialogFooter = (props: PropsWithChildren) => {
   return (
     <footer className='px-2 py-2 flex justify-end gap-3 items-center border-t-2 border-slate-600 bg-slate-800 mt-2'>
       {props.children}
@@ -109,7 +109,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
       className='bg-slate-700 text-slate-100 z-10 rounded-md border border-slate-800 backdrop:bg-slate-800 backdrop:bg-opacity-70 open:animate-fade-in open:backdrop:animate-fade-in backdrop:backdrop-blur-sm shadow-lg shadow-slate-900/80'
     >
       {hasHeader ? (
-        <ModalDialogHeader title={title ? title : 'Boite de dialogue'}>
+        <ModalDialogHeader title={title ?? 'Boite de dialogue'}>
           {hasTopCloseButton && <ModalButtonClose onClose={handleCloseModalClick} />}
         </ModalDialogHeader>
       ) : (
@@ -121,16 +121,16 @@ export const ModalDialog = (props: ModalDialogProps) => {
           {hasFooterActionButton && (
             <Button
               type={attachedFormId ? 'submit' : 'button'}
-              form={attachedFormId && attachedFormId}
+              form={attachedFormId}
               variant='primary'
               onClick={handleActionModalClick}
             >
-              {actionButtonText ? actionButtonText : 'Ok'}
+              {actionButtonText ?? 'Ok'}
             </Button>
           )}
           {hasFooterCloseButton && (
             <Button variant='accent' onClick={handleCloseModalClick}>
-              {closeButtonText ? closeButtonText : 'Annuler'}
+              {closeButtonText ?? 'Annuler'}
             </Button>
           )}
         </ModalDialogFooter>

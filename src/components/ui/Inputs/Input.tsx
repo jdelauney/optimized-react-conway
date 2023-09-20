@@ -1,27 +1,10 @@
-import { ForwardedRef, InputHTMLAttributes, Key, ReactNode, forwardRef } from 'react';
+import { ForwardedRef, InputHTMLAttributes, ReactNode, forwardRef } from 'react';
 
 type InputProps = {
-  // key?: Key;
   label?: string;
   Icon?: ReactNode;
   placeholder?: string;
-  type:
-    | 'text'
-    | 'email'
-    | 'password'
-    | 'number'
-    | 'search'
-    | 'tel'
-    | 'url'
-    | 'color'
-    | 'date'
-    | 'month'
-    | 'time'
-    | 'week'
-    | 'file'
-    | 'hidden'
-    | 'range'
-    | string;
+  type: string;
   name: string;
   inline?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -37,7 +20,7 @@ export const Input = forwardRef((props: InputProps, ref) => {
         </label>
       )}
       <div className='relative text-accent-200 focus-within:text-accent-100 focus-within:bg-slate-500 h-10 py-2 px-3  bg-slate-900 rounded-md'>
-        <span className='absolute inset-y-0 left-1 flex items-center pl-2'>{Icon && Icon}</span>
+        <span className='absolute inset-y-0 left-1 flex items-center pl-2'>{Icon ?? null}</span>
         <input
           type={type}
           name={name}
@@ -53,3 +36,4 @@ export const Input = forwardRef((props: InputProps, ref) => {
     </div>
   );
 });
+Input.displayName = 'Input';
