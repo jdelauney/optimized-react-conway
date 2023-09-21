@@ -13,7 +13,7 @@ export type ConwayCellType = {
 };
 
 export const CONWAY_DEFAULT_SETTINGS = {
-  cellSize: 10,  
+  cellSize: 10,
   showGridLines: true,
   cellColor: '#fdba74',
   gridColor: '#1c1917',

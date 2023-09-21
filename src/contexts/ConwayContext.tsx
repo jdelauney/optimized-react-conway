@@ -29,7 +29,6 @@ export const ConwayContext = createContext<ConwayContextType>({
   setIsRunning: () => {},
   conwaySettings: {
     cellSize: 0,
-    randomFillRate: 0,
     cellColor: '',
     showGridLines: false,
     gridColor: '',
