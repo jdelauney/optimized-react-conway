@@ -108,13 +108,6 @@ export class ConwayEngine {
     this.reset();
   }
 
-  private randomBooleanWeighted(weightInPercent: number): boolean {
-    if (weightInPercent < 0 || weightInPercent > 100) throw new Error('weightInPercent must be between 0 and 100');
-
-    const weight = weightInPercent / 100;
-    return Math.random() < weight;
-  }
-
   private prepareBufferCellPosFromIndex() {
     for (let i = 0; i < this.maxCell; i++) {
       const x = Math.floor(i % this.maxCol);
@@ -224,8 +217,6 @@ export class ConwayEngine {
 
   public drawGrid() {
     if (this.showGridLines) {
-      //this.ctx!.beginPath();
-      //this.ctx!.lineWidth = 0.5;
       this.ctx!.strokeStyle = this.colorGrid;
 
       for (let i = 0; i <= this.maxCol; i++) {
@@ -241,7 +232,6 @@ export class ConwayEngine {
         this.ctx!.lineTo(this.displayWidth, delta);
         this.ctx!.stroke();
       }
-      //this.ctx!.closePath();
     }
   }
 
@@ -349,7 +339,10 @@ export class ConwayEngine {
     this.gameBoard = this.gameBoard.fill(0);
     this.nextBoard = this.nextBoard.fill(0);
     this.lastBoard = this.lastBoard.fill(0);
+    this.nextLivingCells.fill(0);
+    this.decompositionTime.fill(0);
     this.nbGenerations = 0;
+    this.cellAlive = 0;
   }
 
   public initWorld(width: number, height: number, canvasRef?: HTMLCanvasElement) {
@@ -359,20 +352,24 @@ export class ConwayEngine {
   }
 
   public async generateRandomWorld() {
-    this.cellAlive = 0;
+    this.cellAlive = Math.floor((this.maxCell * this.fillRandomRateInPercent) / 100);
 
+    const tempArray = [];
     for (let i = 0; i < this.maxCell; i++) {
-      // eslint-disable-next-line no-await-in-loop
-      this.gameBoard[i] = this.randomBooleanWeighted(this.fillRandomRateInPercent) ? 1 : 0;
-      this.decompositionTime[i] = 0;
-      if (this.gameBoard[i] === 1) {
-        this.cellAlive++;
-        this.nextLivingCells[this.cellAlive] = i;
-        this.decompositionTime[i] = 100;
-      }
+      tempArray[i] = i < this.cellAlive ? 1 : 0;
     }
 
-    return Promise.resolve();
+    tempArray.sort(() => Math.random() - 0.5);
+
+    let j: number = 0;
+    for (let i = 0; i < this.maxCell; i++) {
+      this.gameBoard[i] = tempArray[i];
+      if (this.gameBoard[i] === 1) {
+        this.nextLivingCells[j] = i;
+        this.decompositionTime[i] = 100;
+        j++;
+      }
+    }
   }
 
   public runStepOnce() {
