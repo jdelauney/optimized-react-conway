@@ -47,7 +47,13 @@ export const useRequestAnimationFrame = (
           return previousState;
         });
       }
-      if (timeElapsedRef.current < msPerFrameRef.current) return;
+      // If the time elapsed is less than the time per frame, do nothing, no we limit the framerate to the target FPS
+      // If the time elapsed is greater than the time per frame, we skip frame for the next frame to be on time depending on the target FPS
+      // we need to update the msStartRef to the current time
+      if (timeElapsedRef.current > msPerFrameRef.current) {
+        msStartRef.current = time;
+        return;
+      }
       const excessTime = timeElapsedRef.current % msPerFrameRef.current;
       msStartRef.current = time - excessTime;
     };
