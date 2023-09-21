@@ -99,9 +99,7 @@ export class ConwayEngine {
     this.lastBoard = new Uint8Array(this.maxCell);
     this.nbNeighbors = new Uint8Array(this.maxCell);
 
-    this.nextLivingCells = new Uint32Array(Math.floor(this.maxCell * ((this.fillRandomRateInPercent + 5) / 100))).fill(
-      0
-    );
+    this.nextLivingCells = new Uint32Array(this.maxCell).fill(0);
     this.decompositionTime = new Uint8Array(this.maxCell).fill(0);
     this.precalcCellPos = [];
 
@@ -110,11 +108,11 @@ export class ConwayEngine {
     this.reset();
   }
 
-  private async randomBooleanWeighted(weightInPercent: number): Promise<boolean> {
+  private randomBooleanWeighted(weightInPercent: number): boolean {
     if (weightInPercent < 0 || weightInPercent > 100) throw new Error('weightInPercent must be between 0 and 100');
 
     const weight = weightInPercent / 100;
-    return Promise.resolve(Math.random() < weight);
+    return Math.random() < weight;
   }
 
   private prepareBufferCellPosFromIndex() {
@@ -362,9 +360,10 @@ export class ConwayEngine {
 
   public async generateRandomWorld() {
     this.cellAlive = 0;
+
     for (let i = 0; i < this.maxCell; i++) {
       // eslint-disable-next-line no-await-in-loop
-      this.gameBoard[i] = (await this.randomBooleanWeighted(this.fillRandomRateInPercent)) ? 1 : 0;
+      this.gameBoard[i] = this.randomBooleanWeighted(this.fillRandomRateInPercent) ? 1 : 0;
       this.decompositionTime[i] = 0;
       if (this.gameBoard[i] === 1) {
         this.cellAlive++;
@@ -372,6 +371,7 @@ export class ConwayEngine {
         this.decompositionTime[i] = 100;
       }
     }
+
     return Promise.resolve();
   }
 
