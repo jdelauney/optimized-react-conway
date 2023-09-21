@@ -1,6 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import { ModalDialog } from '../../../components/ModalDialog/ModalDialog';
 import { ConwaySettingsForm } from './ConwaySettingsForm/ConwaySettingsForm';
+import { ConwayContext } from '../../../contexts/ConwayContext';
 
 type ConwaySettingsModalProps = {
   isOpen: boolean;
@@ -10,9 +11,11 @@ type ConwaySettingsModalProps = {
 export const ConwaySettingsModal = (props: ConwaySettingsModalProps) => {
   const { isOpen, setIsOpen } = props;
 
+  const { setIsReady } = useContext(ConwayContext);
   const inputFocusedRef = useRef<HTMLInputElement>(null);
 
   const handleOnFormSubmitted = () => {
+    setIsReady(false);
     setIsOpen(false);
   };
 
