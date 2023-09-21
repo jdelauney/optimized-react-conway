@@ -33,7 +33,7 @@ export const getConwaySettingsFormConfig = (currentSettings: ConwayFormSetting):
       type: 'number',
       label: 'Random fill rate',
       placeholder: 'Random fill rate',
-      value: currentSettings.randomFillRate.toString(),
+      value: currentSettings.fillRandomRateInPercent.toString(),
       Icon: <GiPerspectiveDiceSixFacesRandom />,
       customOptions: {
         min: 5,
