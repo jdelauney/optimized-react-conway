@@ -54,6 +54,11 @@ export const useRequestAnimationFrame = (
 
     if (!isRunning) {
       cancelAnimationFrame(requestRef.current!);
+      msStartRef.current = undefined;
+      startTimeRef.current = undefined;
+      timeElapsedRef.current = 0;
+      framesRef.current = 0;
+      averageFpsRef.current = 0;
       return;
     }
     requestRef.current = requestAnimationFrame(animate);
